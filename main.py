@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 import base64
 import os
 import uuid
@@ -11,6 +12,8 @@ from pydub import AudioSegment
 from features import extract_features
 
 app = FastAPI(title="AI Voice Detection API")
+
+from fastapi.middleware.cors import CORSMiddleware
 
 # -------- Request Model --------
 class VoiceRequest(BaseModel):
