@@ -1,117 +1,193 @@
-# 🎙️ AI-Generated Voice Detection API (Multi-Language)
+# 🎙️ AI Voice Detector (Multi-Language)
 
-A REST API that detects whether a voice sample is **AI-generated** or **Human**, supporting multiple languages including **Tamil, English, Hindi, Malayalam, and Telugu**.
-
----
-
-## 🚀 Overview
-
-With the rise of AI-generated voices and deepfake audio, distinguishing between real and synthetic speech has become increasingly important.  
-This project provides a **production-ready API** that analyzes audio characteristics and classifies speech as either human or AI-generated.
+A full-stack AI-powered system that detects whether a voice sample is **AI-generated** or **human speech** using audio signal analysis.
 
 ---
 
-## ✨ Features
+## 🌐 Live Demo
 
-- 🎧 Accepts **Base64-encoded MP3 audio**
-- 🌐 Supports **5 languages**:
-  - Tamil
-  - English
-  - Hindi
-  - Malayalam
-  - Telugu
-- 🔐 Secured using **API Key authentication**
-- ⚡ Fast and lightweight **FastAPI backend**
-- 🧠 Explainable decision logic (no black-box model)
-- ☁️ Deployed on **Render**
+🔗 Frontend: https://ai-voice-detector-seven.vercel.app/
+🔗 Backend API: https://ai-voice-detector-qgjt.onrender.com
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Features
 
-- **Python**
-- **FastAPI**
-- **PyDub + FFmpeg**
-- **Librosa**
-- **NumPy & SciPy**
-- **Requests**
-- **Render (Deployment)**
-- **GitHub**
+* 🎧 Upload MP3 audio files
+* 🌍 Supports multiple languages:
 
----
+  * English
+  * Hindi
+  * Tamil
+  * Malayalam
+  * Telugu
+* 🧠 Detects AI vs Human speech
+* 📊 Returns:
 
-## 🔍 How It Works
-
-The system analyzes acoustic features of speech:
-
-- **Pitch Stability** → AI voices tend to have overly consistent pitch  
-- **Energy Variation** → Human speech has natural loudness fluctuations  
-- **Zero Crossing Rate (ZCR)** → Measures signal smoothness  
-- **Spectral Centroid Variation** → Captures frequency distribution changes  
-
-Based on these features, a rule-based system classifies the voice as:
-
-- `AI_GENERATED`
-- `HUMAN`
+  * Classification (AI / HUMAN)
+  * Confidence Score
+  * Explanation
+* ⚡ Real-time API processing
+* 🌐 Fully deployed (Frontend + Backend)
 
 ---
 
-## 🔐 API Authentication
-All requests must include an API key in headers:
+## 🏗️ Tech Stack
+
+### Frontend
+
+* React.js
+* Fetch API
+* Vercel (Deployment)
+
+### Backend
+
+* FastAPI
+* Python
+* Pydub (Audio Processing)
+* FFmpeg (Audio decoding)
+* Render (Deployment)
+
+---
+
+## ⚙️ API Endpoint
+
+### POST `/api/voice-detection`
+
+#### Headers:
+
+```
 x-api-key: sk_test_123456789
+Content-Type: application/json
+```
 
+#### Request Body:
 
-## 🌐 Live API Endpoint
-POST https://ai-voice-detector-qgjt.onrender.com/api/voice-detection
-## 📥 Request Format
-
-### 🔹 Option 1: Base64 Audio
-
-json
-{
-  "language": "Tamil",
-  "audioFormat": "mp3",
-  "audioBase64": "<BASE64_ENCODED_MP3>"
-}
-
-### 🔹 Option 1:  Audio URL
+```json
 {
   "language": "English",
   "audioFormat": "mp3",
-  "audioUrl": "https://example.com/sample.mp3"
+  "audioBase64": "BASE64_AUDIO_STRING"
 }
+```
 
-### Response format
+#### OR (using URL):
+
+```json
+{
+  "language": "English",
+  "audioFormat": "mp3",
+  "audioUrl": "https://example.com/audio.mp3"
+}
+```
+
+---
+
+## 📥 Response Format
+
+```json
 {
   "status": "success",
-  "language": "Tamil",
+  "language": "English",
   "classification": "HUMAN",
   "confidenceScore": 0.85,
   "explanation": "Natural variations in pitch, energy, and articulation patterns detected"
 }
+```
 
-### Error response
-{
-  "status": "error",
-  "message": "Invalid API key or malformed request"
-}
+---
 
-### Sample cURL Request
-curl -X POST https://ai-voice-detector-qgjt.onrender.com/api/voice-detection \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: sk_test_123456789" \
-  -d '{
-    "language": "English",
-    "audioFormat": "mp3",
-    "audioUrl": "https://drive.google.com/uc?export=download&id=1n2RsLy-jfY025IbbaRQMex-KVgePG3zV"
-  }'
+## 🧠 How It Works (Core Logic)
 
+The system does **signal-based audio analysis** to distinguish between AI-generated and human voices.
 
-  ### Project structure
-  ├── main.py           # FastAPI app
-├── features.py       # Feature extraction logic
-├── requirements.txt  # Dependencies
-├── convert.py        # MP3 → Base64 utility
-└── README.md         # Project documentation
+### 🔍 Step-by-step Pipeline:
 
-All requests must include an API key in headers:
+1. **Input Handling**
+
+   * Accepts audio as Base64 or URL
+   * Validates format (MP3 only)
+
+2. **Audio Conversion**
+
+   * Converts MP3 → WAV using FFmpeg
+   * Ensures consistent processing format
+
+3. **Feature Extraction**
+   Extracts key audio features:
+
+   * 🎚️ Pitch (frequency variation)
+   * 🔊 Energy (loudness variation)
+   * 🔁 Zero Crossing Rate (signal smoothness)
+   * 🌈 Spectral Centroid (frequency distribution)
+
+4. **Decision Logic (Rule-Based AI)**
+   The system compares extracted features:
+
+   | Feature           | AI Voice Pattern | Human Voice Pattern  |
+   | ----------------- | ---------------- | -------------------- |
+   | Pitch Variation   | Very stable      | Fluctuates naturally |
+   | Energy            | Uniform          | Dynamic              |
+   | ZCR               | Smooth           | Irregular            |
+   | Spectral Features | Consistent       | Variable             |
+
+5. **Scoring System**
+
+   * Each feature votes: AI or Human
+   * Final classification based on majority
+
+6. **Confidence Score**
+
+   * Based on how many features agree
+
+---
+
+## 🧪 Example Use Case
+
+* Detect AI-generated deepfake audio
+* Voice authentication systems
+* Fraud/scam detection systems
+* Content verification tools
+
+---
+
+## ⚠️ Limitations
+
+* Rule-based (not deep learning yet)
+* Accuracy depends on audio quality
+* Advanced AI voices may bypass detection
+
+---
+
+## 🔮 Future Improvements
+
+* 🤖 Train ML/DL model (CNN / LSTM)
+* 🎯 Improve accuracy with dataset training
+* 📱 Mobile app integration
+* 🔊 Support more audio formats (WAV, FLAC)
+* 🧠 Real-time streaming detection
+
+---
+
+## 🛠️ Setup Locally
+
+```bash
+git clone https://github.com/your-username/ai-voice-detector.git
+cd ai-voice-detector
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+---
+
+## 👨‍💻 Author
+
+Developed as part of a Hackathon Project 🚀
+Built with ❤️ using FastAPI + React
+
+---
+
+## ⭐ If you like this project
+
+Give it a ⭐ on GitHub and share it!
+
